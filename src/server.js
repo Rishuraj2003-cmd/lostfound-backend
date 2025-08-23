@@ -9,7 +9,6 @@ import { connectDB } from "./config/db.js";
 import { env } from "./config/env.js";
 import Visitor from "./models/Visitor.js";
 import authRoutes from "./routes/authRoutes.js";
-import visitorRoutes from "./routes/visitorRoutes.js";
 
 const server = http.createServer(app);
 
@@ -30,9 +29,6 @@ app.use((req, res, next) => {
 
 // Auth routes
 app.use("/api/auth", authRoutes);
-
-// Visitor routes
-app.use("/api/visitor", visitorRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {

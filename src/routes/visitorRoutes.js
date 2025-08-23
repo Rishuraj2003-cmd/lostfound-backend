@@ -1,19 +1,24 @@
+// src/routes/visitorRoutes.js
 import express from "express";
 import Visitor from "../models/Visitor.js";
 
 const router = express.Router();
 
-// GET visitor count
 router.get("/", async (req, res) => {
   try {
     let visitor = await Visitor.findOne();
     if (!visitor) {
-      visitor = new Visitor({ count: 0 });
+      visitor = await Visitor.create({ count: 1 });
+    } else {
+      visitor.count += 1;
       await visitor.save();
     }
+
+    // return response
     res.json({ count: visitor.count });
   } catch (err) {
-    res.status(500).json({ message: "Error fetching visitor count" });
+    console.error("❌ Error fetching visitor count:", err);
+    res.status(500).json({ error: "Server error" });
   }
 });
 
