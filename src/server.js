@@ -9,6 +9,7 @@ import { connectDB } from "./config/db.js";
 import { env } from "./config/env.js";
 import Visitor from "./models/Visitor.js";
 import authRoutes from "./routes/authRoutes.js";
+import visitorRoutes from "./routes/visitorRoutes.js";
 
 const server = http.createServer(app);
 
@@ -55,6 +56,10 @@ app.get("/api/visitor", async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
+
+
+app.use("/api/visitor", visitorRoutes);
+
 
 // Socket.io events
 io.on("connection", async (socket) => {
