@@ -13,19 +13,29 @@ import visitorRoutes from "./routes/visitorRoutes.js";
 import "./config/passport.js";
 
 const app = express();
+
 const allowedOrigins = [
-    "http://localhost:5173",
-    "https://lostfound-frontend.vercel.app", 
-    "https://lostfound-frontend-csiyryi63-rishu-rajs-projects-ae5648ad.vercel.app" 
+    "http://localhost:5173", // dev ke liye
+    "https://lostfound-frontend.vercel.app", // production domain
+    "https://lostfound-frontend-csiyryi63-rishu-rajs-projects-ae5648ad.vercel.app" // vercel preview link bhi allow karo
   ];
+  
+  app.use(
+    cors({
+      origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+          callback(null, true);
+        } else {
+          callback(new Error("Not allowed by CORS"));
+        }
+      },
+      credentials: true,
+    })
+  );
+  
 // 🔐 Middlewares
 app.use(helmet());
-app.use(
-  cors({
-    origin: env.CLIENT_URL,
-    credentials: true,
-  })
-);
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(passport.initialize());
