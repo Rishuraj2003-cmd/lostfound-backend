@@ -156,8 +156,6 @@ export async function forgotPassword(req, res) {
     const { email } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
-      // avoid leaking which emails exist if you prefer:
-      // return res.json({ message: "If the email exists, a reset link was sent." });
       return res.status(404).json({ message: "No account found with that email" });
     }
 
@@ -167,7 +165,8 @@ export async function forgotPassword(req, res) {
     user.resetTokenExpires = Date.now() + 60 * 60 * 1000;
     await user.save();
 
-    const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
+    const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+    const resetUrl = `${FRONTEND_URL.replace(/\/+$/, "")}/reset-password/${resetToken}`;
 
     const transporter = nodemailer.createTransport({
       service: "Gmail",
