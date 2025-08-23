@@ -16,7 +16,7 @@ const server = http.createServer(app);
 // Attach socket.io
 const io = new Server(server, {
   cors: {
-    origin: env.CLIENT_URL,
+    origin: [env.CLIENT_URL, "http://localhost:5173", "http://localhost:3000"],
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -31,35 +31,13 @@ app.use((req, res, next) => {
 // Auth routes
 app.use("/api/auth", authRoutes);
 
+// Visitor routes
+app.use("/api/visitor", visitorRoutes);
+
 // Health check
 app.get("/api/health", (req, res) => {
   res.json({ status: "OK", message: "Backend is running 🚀" });
 });
-
-// Visitor count API
-app.get("/api/visitor", async (req, res) => {
-  try {
-    let visitor = await Visitor.findOne();
-    if (!visitor) {
-      visitor = await Visitor.create({ count: 1 });
-    } else {
-      visitor.count += 1;
-      await visitor.save();
-    }
-
-    // Broadcast new count to all sockets
-    io.emit("visitorCount", visitor.count);
-
-    res.json({ count: visitor.count });
-  } catch (err) {
-    console.error("❌ Error fetching visitor count:", err);
-    res.status(500).json({ error: "Server error" });
-  }
-});
-
-
-app.use("/api/visitor", visitorRoutes);
-
 
 // Socket.io events
 io.on("connection", async (socket) => {
@@ -85,16 +63,19 @@ io.on("connection", async (socket) => {
   });
 });
 
-// Start server
+// Start server safely
 const port = process.env.PORT || 5001;
 
-try {
-  await connectDB();
+const startServer = async () => {
+  try {
+    await connectDB();
+    server.listen(port, () => {
+      console.log(`🚀 Server running in ${process.env.NODE_ENV} mode on port ${port}`);
+    });
+  } catch (err) {
+    console.error("❌ Failed to start server:", err);
+    process.exit(1);
+  }
+};
 
-  server.listen(port, () => {
-    console.log(`🚀 Server running in ${process.env.NODE_ENV} mode on port ${port}`);
-  });
-} catch (err) {
-  console.error("❌ Failed to start server:", err);
-  process.exit(1);
-}
+startServer();

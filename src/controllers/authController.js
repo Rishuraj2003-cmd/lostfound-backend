@@ -80,7 +80,7 @@ export async function login(req, res) {
 
 
   const token = signAccess(user);
-  res.cookie("accessToken", token, { httpOnly: true, sameSite: "lax" });
+  res.cookie("accessToken", token, { httpOnly: true, sameSite: "strict",secure: process.env.NODE_ENV === "production" });
   res.json({
     user: { id: user._id, name: user.name, email: user.email, role: user.role },
     token,
