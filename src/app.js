@@ -13,7 +13,11 @@ import visitorRoutes from "./routes/visitorRoutes.js";
 import "./config/passport.js";
 
 const app = express();
-
+const allowedOrigins = [
+    "http://localhost:5173",
+    "https://lostfound-frontend.vercel.app", 
+    "https://lostfound-frontend-csiyryi63-rishu-rajs-projects-ae5648ad.vercel.app" 
+  ];
 // 🔐 Middlewares
 app.use(helmet());
 app.use(

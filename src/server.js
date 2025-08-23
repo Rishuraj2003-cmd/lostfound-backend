@@ -15,12 +15,15 @@ const server = http.createServer(app);
 // Attach socket.io
 const io = new Server(server, {
   cors: {
-    origin: [env.CLIENT_URL, "http://localhost:5173", "http://localhost:3000"],
+    origin: [
+      "http://localhost:5173",
+      "https://lostfound-frontend.vercel.app",
+      "https://lostfound-frontend-csiyryi63-rishu-rajs-projects-ae5648ad.vercel.app"
+    ],
     methods: ["GET", "POST"],
-    credentials: true,
-  },
+    credentials: true
+  }
 });
-
 // Attach io to every req (for controllers if needed)
 app.use((req, res, next) => {
   req.io = io;
