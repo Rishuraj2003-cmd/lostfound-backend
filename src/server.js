@@ -18,9 +18,8 @@ const io = new Server(server, {
     origin: [
       "http://localhost:5173",
       "https://lostfound-frontend.vercel.app",
-      "https://lostfound-frontend-csiyryi63-rishu-rajs-projects-ae5648ad.vercel.app"
+      /\.vercel\.app$/  // ✅ preview deploys bhi allow
     ],
-    methods: ["GET", "POST"],
     credentials: true
   }
 });
