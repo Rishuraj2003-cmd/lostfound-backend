@@ -21,12 +21,7 @@ const corsOptions = {
         "https://lostfound-frontend.vercel.app"
       ];
   
-      // Allow all vercel preview URLs
-      if (
-        !origin || 
-        allowedOrigins.includes(origin) || 
-        /\.vercel\.app$/.test(origin)
-      ) {
+      if (!origin || allowedOrigins.includes(origin) || /\.vercel\.app$/.test(origin)) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
