@@ -1,7 +1,3 @@
-// server.js
-import dotenv from "dotenv";
-dotenv.config();
-
 import http from "http";
 import { Server } from "socket.io";
 import app from "./app.js";
@@ -18,18 +14,19 @@ const io = new Server(server, {
     origin: [
       "http://localhost:5173",
       "https://lostfound-frontend.vercel.app",
-      /\.vercel\.app$/  // ✅ preview deploys bhi allow
+      /\.vercel\.app$/, // ✅ preview deploys bhi allow
     ],
-    credentials: true
-  }
+    credentials: true,
+  },
 });
+
 // Attach io to every req (for controllers if needed)
 app.use((req, res, next) => {
   req.io = io;
   next();
 });
 
-// Auth routes
+// Routes
 app.use("/api/auth", authRoutes);
 
 // Health check
@@ -41,7 +38,6 @@ app.get("/api/health", (req, res) => {
 io.on("connection", async (socket) => {
   console.log("✅ Socket connected:", socket.id);
 
-  // Send current visitor count to new client
   try {
     const visitor = await Visitor.findOne();
     if (visitor) {
@@ -62,13 +58,15 @@ io.on("connection", async (socket) => {
 });
 
 // Start server safely
-const port = process.env.PORT || 5001;
+const port = env.PORT;
 
 const startServer = async () => {
   try {
     await connectDB();
     server.listen(port, () => {
-      console.log(`🚀 Server running in ${process.env.NODE_ENV} mode on port ${port}`);
+      console.log(
+        `🚀 Server running in ${env.NODE_ENV} mode on port ${port}`
+      );
     });
   } catch (err) {
     console.error("❌ Failed to start server:", err);
